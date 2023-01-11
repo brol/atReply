@@ -6,7 +6,7 @@ var ancestors_count = 0;
 var first_margin = 25; // indent of the first level reply (in pixel)
 
 $(document).ready(function () {
-	if (!$("#comments > dl > dt").length) {
+	if (!$("#comments > dl > dt").length && !$("#comments > ul > li").length) {
 		return; // no comments, bail out
 	}
 	if (atreply_show_switch) {setSwitchTag();}
@@ -23,7 +23,7 @@ function setSwitchTag()
     var switch_tag = document.createElement("p");
     switch_tag.className = "threading";
     $("#comments h3").before(switch_tag)
-    $("#comments > p").html(
+    $("#comments > p.threading").html(
         '<label id="atReplySwitch">'+atReply_switch_text+': <input type="checkbox" id="threading-switch" '+
 		((atreply_append)? 'checked' : '')+
 		'/></label>').find("input").click(toggleAtReplyDisplay);
@@ -113,7 +113,7 @@ function commentInfos(comment_id, replied)
 
 function appendReplies(b)
 {
-	var dl = $("#comments > dl");
+	var dl = $("#comments > dl").length ? $("#comments > dl") : $("#comments > ul");
 	dl.empty();
 	
 	for(var v in comments_list)
@@ -191,7 +191,7 @@ function setCommentInfos(id)
 			var a = dd.html().match(/@<a href="http(.+)#c(\d+)"/i);
 			if (a)
 			{
-				commentInfos_list['c'+id] = new commentInfos(id, 'c'+a[1]);
+				commentInfos_list['c'+id] = new commentInfos(id, 'c'+a[2]);
 				// add to replies_list
 				replies_list[id] = a[2];
 			}
@@ -206,7 +206,8 @@ function setCommentInfos(id)
 
 function getCommentsChildren()
 {
-	$("#comments > dl").children().each(function(i)
+	var dl = $("#comments > dl").length ? $("#comments > dl") : $("#comments > ul");
+	dl.children().each(function(i)
 	{
 		// add to comments_list : this element, and the id if it is a comment
 		comments_list[i] = new Array(this, null);
@@ -225,6 +226,9 @@ function getCommentsChildren()
 		{
 			var id = $(this).attr('id').replace(/^c/,'');
 			setCommentInfos(id);
+			// add this comment to the replied comment's children
+			if(commentInfos_list['c'+id].isReply())
+				commentInfos_list[commentInfos_list['c'+id].replies_to].addChild(commentInfos_list['c'+id]);
 		}
 		else
 		{
