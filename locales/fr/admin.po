@@ -1,6 +1,6 @@
 # Language: Français
 # Module: atReply - 2.0-dev
-# Date: 2023-01-11 12:01:00
+# Date: 2023-01-11 13:43:13
 # Author: Pierre Van Glabeke
 # Translated with translater 2022.12.26
 
@@ -9,8 +9,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Project-Id-Version: atReply 2.0-dev\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-11T12:01:00+00:00\n"
-"Last-Translator: brol\n"
+"PO-Revision-Date: 2023-01-11T13:43:13+00:00\n"
+"Last-Translator: Pierre Van Glabeke\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -72,19 +72,19 @@ msgstr "Le plugin %s est requis."
 msgid "Create an image with another color"
 msgstr "Créer une image avec une autre couleur"
 
-#: index.php:278
+#: index.php:279
 msgid "Leave blank to disable this feature."
 msgstr "Laissez vide pour annuler ce comportement."
 
-#: index.php:279
+#: index.php:280
 msgid "The default image will be used."
 msgstr "L'image par défaut sera utilisée."
 
-#: index.php:282
+#: index.php:283
 msgid "Preview:"
 msgstr "Aperçu&nbsp;:"
 
-#: index.php:285
+#: index.php:286
 msgid "Visitors may see the old image if their browser still use it."
 msgstr "Les visiteurs peuvent voir l'ancienne image si leur navigateur l'utilise toujours."
 

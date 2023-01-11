@@ -275,7 +275,8 @@ if (strlen($settings->atreply_color) > 1)
 				$settings->atreply_color,'colorpicker')); ?>
 		</p>
 		<p class="info">
-			<?php echo(__('Leave blank to disable this feature.').' '.
+			<?php echo(__('Type the color code in hexadecimal, for example for red: #ff0000.').'<br />'.
+				__('Leave blank to disable this feature.').' '.
 				__('The default image will be used.')); ?>
 		</p>
 		
