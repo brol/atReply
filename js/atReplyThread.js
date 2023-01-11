@@ -191,7 +191,7 @@ function setCommentInfos(id)
 			var a = dd.html().match(/@<a href="http(.+)#c(\d+)"/i);
 			if (a)
 			{
-				commentInfos_list['c'+id] = new commentInfos(id, 'c'+a[1]);
+				commentInfos_list['c'+id] = new commentInfos(id, 'c'+a[2]);
 				// add to replies_list
 				replies_list[id] = a[2];
 			}
