@@ -30,25 +30,16 @@
 
 if (!defined('DC_CONTEXT_ADMIN')) {return;}
 
-# On lit la version du plugin
-$m_version = $core->plugins->moduleInfo('atReply','version');
-
-# On lit la version du plugin dans la table des versions
-$i_version = $core->getVersion('atReply');
- 
 # La version dans la table est supérieure ou égale à
 # celle du module, on ne fait rien puisque celui-ci
 # est installé
-if (version_compare($i_version,$m_version,'>=')) {
-	return;
+if (!dcCore::app()->newVersion(basename(__DIR__), dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version'))) {
+    return;
 }
 
 # delete this setting which was saved in the wrong namespace
-$core->con->execute('DELETE FROM '.$core->prefix.'setting '.
+dcCore::app()->con->execute('DELETE FROM '.$core->prefix.'setting '.
 		'WHERE (setting_ns = \'atreply\') '.
 		'AND (setting_id = \'wiki_comments\');');
-
-# La procédure d'installation commence vraiment là
-$core->setVersion('atReply',$m_version);
 
 return true;

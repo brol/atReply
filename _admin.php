@@ -30,29 +30,29 @@
 
 if (!defined('DC_CONTEXT_ADMIN')) {return;}
 
-l10n::set(dirname(__FILE__).'/locales/'.$_lang.'/admin');
+l10n::set(dirname(__FILE__).'/locales/'.dcCore::app()->lang.'/admin');
 
-$core->addBehavior('adminAfterCommentDesc',
+dcCore::app()->addBehavior('adminAfterCommentDesc',
 	array('AtReplyAdmin','adminAfterCommentDesc'));
 
 # from hum plugin
 # admin/comments.php Add actions on comments combo
-$core->addBehavior('adminCommentsActionsCombo',
+dcCore::app()->addBehavior('adminCommentsActionsCombo',
 	array('AtReplyAdmin','adminCommentsActionsCombo'));
 # admin/comments_actions.php Save actions on comments
-$core->addBehavior('adminCommentsActions',
+dcCore::app()->addBehavior('adminCommentsActionsV2',
 	array('AtReplyAdmin','adminCommentsActions'));
 # /from hum plugin
 
-$core->addBehavior('adminBeforeCommentCreate',
+dcCore::app()->addBehavior('adminBeforeCommentCreate',
 	array('AtReplyAdmin','adminBeforeCommentCreate'));
 
-$core->addBehavior('adminAfterCommentCreate',
+dcCore::app()->addBehavior('adminAfterCommentCreate',
 	array('AtReplyAdmin','adminAfterCommentCreate'));
 
-$_menu['Blog']->addItem(__('@ Reply'),'plugin.php?p=atReply',
+dcCore::app()->menu['Blog']->addItem(__('@ Reply'),'plugin.php?p=atReply',
 	'index.php?pf=atReply/icon.png',preg_match('/plugin.php\?p=atReply(&.*)?$/',
-		$_SERVER['REQUEST_URI']),$core->auth->check('admin',$core->blog->id));	
+		$_SERVER['REQUEST_URI']),dcCore::app()->auth->check('admin',dcCore::app()->blog->id));	
 
 class AtReplyAdmin
 {
@@ -83,14 +83,14 @@ class AtReplyAdmin
 	# from hum plugin
 	public static function adminCommentsActionsCombo($args)
 	{
-		if ($GLOBALS['core']->auth->check('publish,contentadmin',
-			$GLOBALS['core']->blog->id))
+		if (dcCore::app()->auth->check('publish,contentadmin',
+			dcCore::app()->blog->id))
 		{
 			$args[0][__('Create a new comment in reply to this comment')] = 'atreply_reply';
 		}
 	}
 
-	public static function adminCommentsActions($core,$co,$action,$redir)
+	public static function adminCommentsActions($action,$redir)
 	{
 		# ignore trackbacks
 		if ($co->comment_trackback == 1) {return;}
@@ -105,7 +105,7 @@ class AtReplyAdmin
 				
 				try
 				{
-					$rs = $core->blog->getPosts(
+					$rs = dcCore::app()->blog->getPosts(
 						array('post_id' => $post_id,
 							'post_type' => ''));
 					
@@ -113,12 +113,12 @@ class AtReplyAdmin
 						throw new Exception(__('Entry does not exist.'));
 					}
 					
-					$cur = $core->con->openCursor($core->prefix.'comment');
+					$cur = dcCore::app()->con->openCursor(dcCore::app()->prefix.'comment');
 					
-					$cur->comment_author = $core->auth->getInfo('user_cn');
-					$cur->comment_email = html::clean($core->auth->getInfo('user_email'));
-					$cur->comment_site = html::clean($core->auth->getInfo('user_url'));
-					$cur->comment_content = $core->HTMLfilter(
+					$cur->comment_author = dcCore::app()->auth->getInfo('user_cn');
+					$cur->comment_email = html::clean(dcCore::app()->auth->getInfo('user_email'));
+					$cur->comment_site = html::clean(dcCore::app()->auth->getInfo('user_url'));
+					$cur->comment_content = dcCore::app()->HTMLfilter(
 						'<p>'.
 							sprintf(__('@%s:'),'<a href="'.
 							$rs->getURL().'#c'.
@@ -132,15 +132,15 @@ class AtReplyAdmin
 					$cur->post_id = (integer) $post_id;
 					
 					# --BEHAVIOR-- adminBeforeCommentCreate
-					$core->callBehavior('adminBeforeCommentCreate',$cur);
+					dcCore::app()->callBehavior('adminBeforeCommentCreate',$cur);
 					
-					$comment_id = $core->blog->addComment($cur);
+					$comment_id = dcCore::app()->blog->addComment($cur);
 					
 					# --BEHAVIOR-- adminAfterCommentCreate
-					$core->callBehavior('adminAfterCommentCreate',$cur,$comment_id);
+					dcCore::app()->callBehavior('adminAfterCommentCreate',$cur,$comment_id);
 					
-					if (($core->blog->settings->atreply_subscribe_replied_comment == true)
-						&& ($core->plugins->moduleExists('subscribeToComments')))
+					if ((dcCore::app()->blog->settings->atreply_subscribe_replied_comment == true)
+						&& (dcCore::app()->plugins->moduleExists('subscribeToComments')))
 					{
 						# subscribe the email address of the replied comment
 						$subscriber = new subscriber($co->comment_email);
@@ -149,11 +149,11 @@ class AtReplyAdmin
 					
 					http::redirect('comment.php?id='.$comment_id.'&at_reply_creaco=1');
 				} catch (Exception $e) {
-					$core->error->add($e->getMessage());
+					dcCore::app()->error->add($e->getMessage());
 				}
 			}
 			
-			if (!$core->error->flag()) {
+			if (!dcCore::app()->error->flag()) {
 				http::redirect($redir);
 			}
 		}
@@ -161,9 +161,9 @@ class AtReplyAdmin
 	# /from hum plugin
 }
 
-$core->addBehavior('adminDashboardFavorites','atReplyDashboardFavorites');
+dcCore::app()->addBehavior('adminDashboardFavoritesV2','atReplyDashboardFavorites');
 
-function atReplyDashboardFavorites($core,$favs)
+function atReplyDashboardFavorites($favs)
 {
 	$favs->register('atReply', array(
 		'title' => __('@ Reply'),

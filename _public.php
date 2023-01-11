@@ -30,23 +30,22 @@
 
 if (!defined('DC_RC_PATH')) {return;}
 
-$core->addBehavior('templateBeforeValue',array('AtReplyTpl','templateBeforeValue'));
-$core->addBehavior('templateAfterValue',array('AtReplyTpl','templateAfterValue'));
+dcCore::app()->addBehavior('templateBeforeValueV2',array('AtReplyTpl','templateBeforeValue'));
+dcCore::app()->addBehavior('templateAfterValueV2',array('AtReplyTpl','templateAfterValue'));
 
-$core->blog->settings->addNameSpace('atreply');
+dcCore::app()->blog->settings->addNameSpace('atreply');
 
-if ($core->blog->settings->atreply->atreply_active)
+if (dcCore::app()->blog->settings->atreply->atreply_active)
 {
-	$core->addBehavior('publicHeadContent',array('AtReplyTpl','publicHeadContent'));
-	$core->addBehavior('publicCommentBeforeContent',array('AtReplyTpl','publicCommentBeforeContent'));
+	dcCore::app()->addBehavior('publicHeadContent',array('AtReplyTpl','publicHeadContent'));
+	dcCore::app()->addBehavior('publicCommentBeforeContent',array('AtReplyTpl','publicCommentBeforeContent'));
 }
 
 class AtReplyTpl
 {
-	public static function templateBeforeValue($core,$v,$attr)
+	public static function templateBeforeValue($v,$attr)
 	{
-		global $core, $_ctx;
-		if ($v == 'CommentAuthorLink' && $_ctx->posts->commentsActive())
+		if ($v == 'CommentAuthorLink')
 		{
 			return('<span class="commentAuthor" '.
 				'id="atreply_<?php echo $_ctx->comments->comment_id; ?>" '.
@@ -54,7 +53,7 @@ class AtReplyTpl
 		}
 	}
 
-	public static function templateAfterValue($core,$v,$attr)
+	public static function templateAfterValue($v,$attr)
 	{
 		if ($v == 'CommentAuthorLink')
 		{
@@ -62,17 +61,17 @@ class AtReplyTpl
 		}
 	}
 	
-	public static function publicHeadContent($core)
+	public static function publicHeadContent()
 	{
-		$set = $core->blog->settings->atreply;
+		$set = dcCore::app()->blog->settings->atreply;
 		
-		$QmarkURL = $core->blog->getQmarkURL();
+		$QmarkURL = dcCore::app()->blog->getQmarkURL();
 		
 		# personalized image
 		if ((strlen($set->atreply_color) > 1)
-			&& (file_exists($core->blog->public_path.'/atReply/reply.png')))
+			&& (file_exists(dcCore::app()->blog->public_path.'/atReply/reply.png')))
 		{
-			$image_url = $core->blog->settings->system->public_url.
+			$image_url = dcCore::app()->blog->settings->system->public_url.
 				'/atReply/reply.png';
 		}
 		else
@@ -128,9 +127,9 @@ class AtReplyTpl
 			'pf=atReply/js/atReply.js'.'"></script>'."\n");
 	}
 	
-	public static function publicCommentBeforeContent($core,$ctx)
+	public static function publicCommentBeforeContent()
 	{
-			echo '<span id="atReplyComment'.$ctx->comments->f('comment_id').
+			echo '<span id="atReplyComment'.dcCore::app()->ctx->comments->f('comment_id').
 				'" style="display:none;"></span>';
 	}
 }

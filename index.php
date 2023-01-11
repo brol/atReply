@@ -30,7 +30,7 @@
 
 if (!defined('DC_CONTEXT_ADMIN')) {return;}
 
-if (!$core->auth->check('admin',$core->blog->id))
+if (!dcCore::app()->auth->check('admin',dcCore::app()->blog->id))
 {
 	echo('<html><head><title>Error</title></head>'.
 		'<body><p class="error">'.
@@ -41,9 +41,9 @@ if (!$core->auth->check('admin',$core->blog->id))
 
 $page_title = __('@ Reply');
 
-$core->blog->settings->addNameSpace('atreply');
+dcCore::app()->blog->settings->addNameSpace('atreply');
 
-$settings =& $core->blog->settings->atreply;
+$settings =& dcCore::app()->blog->settings->atreply;
 
 try
 {
@@ -58,7 +58,7 @@ try
 		if (!empty($_POST['atreply_active']))
 		{
 			# from commentsWikibar/index.php
-			$core->blog->settings->system->put('wiki_comments',true,'boolean');
+			dcCore::app()->blog->settings->system->put('wiki_comments',true,'boolean');
 		}
 		
 		$settings->put('atreply_display_title',!empty($_POST['atreply_display_title']),
@@ -86,7 +86,7 @@ try
 			$green = $color[1];
 			$blue = $color[2];	
 	
-			$dir = path::real($core->blog->public_path.'/atReply',false);
+			$dir = path::real(dcCore::app()->blog->public_path.'/atReply',false);
 			files::makeDir($dir,true);
 			$file_path = $dir.'/reply.png';
 	
@@ -136,18 +136,18 @@ try
 		# only update the blog if the setting have changed
 		if ($active == empty($_POST['atreply_active']))
 		{
-			$core->blog->triggerBlog();
+			dcCore::app()->blog->triggerBlog();
 			
 			# delete the cache directory
-			$core->emptyTemplatesCache();
+			dcCore::app()->emptyTemplatesCache();
 		}
 		
-		http::redirect($p_url.'&saveconfig=1');
+		http::redirect(dcCore::app()->admin->getPageURL().'&saveconfig=1');
 	}
 }
 catch (Exception $e)
 {
-	$core->error->add($e->getMessage());
+	dcCore::app()->error->add($e->getMessage());
 }
 
 if (isset($_GET['saveconfig']))
@@ -155,9 +155,9 @@ if (isset($_GET['saveconfig']))
 	$msg = __('Configuration successfully updated.');
 }
 
-$image_url = $core->blog->getQmarkURL().'pf=atReply/img/reply.png';
+$image_url = dcCore::app()->blog->getQmarkURL().'pf=atReply/img/reply.png';
 
-$system = $core->blog->settings->system;
+$system = dcCore::app()->blog->settings->system;
 
 # personalized image
 if (strlen($settings->atreply_color) > 1)
@@ -173,7 +173,7 @@ if (strlen($settings->atreply_color) > 1)
 		if (substr($system->public_url,0,1) == '/')
 		{
 			# public_path is located at the root of the website
-			$image_url = $core->blog->host.'/'.$personalized_image;
+			$image_url = dcCore::app()->blog->host.'/'.$personalized_image;
 		}
 		else if (substr($system->public_url,0,4) == 'http')
 		{
@@ -181,7 +181,7 @@ if (strlen($settings->atreply_color) > 1)
 		}
 		else
 		{
-			$image_url = $core->blog->url.$personalized_image;
+			$image_url = dcCore::app()->blog->url.$personalized_image;
 		}
 	}
 }
@@ -198,13 +198,13 @@ if (strlen($settings->atreply_color) > 1)
 	{
 		echo dcPage::breadcrumb(
 			array(
-				html::escapeHTML($core->blog->name) => '',
+				html::escapeHTML(dcCore::app()->blog->name) => '',
 				'<span class="page-title">'.$page_title.'</span>' => ''
 			));
 	}
 	else
 	{
-		echo('<h2>'.html::escapeHTML($core->blog->name).' &rsaquo; '.
+		echo('<h2>'.html::escapeHTML(dcCore::app()->blog->name).' &rsaquo; '.
 			$page_title.'</h2>');
 	}
 	?>
@@ -223,7 +223,7 @@ if (strlen($settings->atreply_color) > 1)
 		}
 	?>
 	
-	<form method="post" action="<?php echo $p_url; ?>">
+	<form method="post" action="<?php echo dcCore::app()->admin->getPageURL(); ?>">
 		<div class="fieldset"><h4><?php echo(__('Activation')); ?></h4>
     <p><?php echo(form::checkbox('atreply_active',1,
 			$settings->atreply_active)); ?>
@@ -294,7 +294,7 @@ if (strlen($settings->atreply_color) > 1)
 		<p class="info"><?php echo(__('Visitors may see the old image if their browser still use it.')); ?></p>
 		</div>
 		
-		<p><?php echo $core->formNonce(); ?></p>
+		<p><?php echo dcCore::app()->formNonce(); ?></p>
 		<p><input type="submit" name="saveconfig" value="<?php echo __('Save'); ?>" /></p>
 	</form>
 
