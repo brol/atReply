@@ -152,15 +152,16 @@ class AtReplyAdmin
 	# /from hum plugin
 }
 
-dcCore::app()->addBehavior('adminDashboardFavoritesV2','atReplyDashboardFavorites');
-
-function atReplyDashboardFavorites($favs)
-{
-	$favs->register('atReply', array(
-		'title' => __('@ Reply'),
-		'url' => 'plugin.php?p=atReply',
-		'small-icon' => 'index.php?pf=atReply/icon.png',
-		'large-icon' => 'index.php?pf=atReply/icon-big.png',
-		'permissions' => 'usage,contentadmin'
-	));
-}
+// Admin dashbaord favorite
+dcCore::app()->addBehavior('adminDashboardFavoritesV2', function ($favs) {
+    $favs->register(basename(__DIR__), [
+        'title'       => __('@ Reply'),
+        'url'         => dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+        'small-icon'  => dcPage::getPF(basename(__DIR__) . '/icon.png'),
+        'large-icon'  => dcPage::getPF(basename(__DIR__) . '/icon-big.png'),
+        'permissions' => dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_USAGE,
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]),
+    ]);
+});
