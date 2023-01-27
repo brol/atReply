@@ -41,9 +41,19 @@ dcCore::app()->addBehavior('adminBeforeCommentCreate',
 dcCore::app()->addBehavior('adminAfterCommentCreate',
 	array('AtReplyAdmin','adminAfterCommentCreate'));
 
-dcCore::app()->menu['Blog']->addItem(__('@ Reply'),'plugin.php?p=atReply',
-	'index.php?pf=atReply/icon.png',preg_match('/plugin.php\?p=atReply(&.*)?$/',
-		$_SERVER['REQUEST_URI']),dcCore::app()->auth->check('admin',dcCore::app()->blog->id));	
+// Admin sidebar menu
+dcCore::app()->menu[dcAdmin::MENU_BLOG]->addItem(
+    __('@ Reply'),
+    dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__)),
+    dcPage::getPF(basename(__DIR__) . '/icon.png'),
+    preg_match(
+        '/' . preg_quote(dcCore::app()->adminurl->get('admin.plugin.' . basename(__DIR__))) . '(&.*)?$/',
+        $_SERVER['REQUEST_URI']
+    ),
+    dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+        dcAuth::PERMISSION_CONTENT_ADMIN,
+    ]), dcCore::app()->blog->id)
+);
 
 class AtReplyAdmin
 {

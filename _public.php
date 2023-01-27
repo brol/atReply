@@ -75,7 +75,7 @@ class AtReplyTpl
 		
 		# Javascript
 		echo(
-			'<script type="text/javascript">'."\n".
+			'<script>'."\n".
 			'//<![CDATA['."\n".
 			'var atReplyDisplayTitle = '.$title.';'."\n".
 			'var atReplyTitle = \''.
@@ -92,7 +92,7 @@ class AtReplyTpl
 		if ($set->atreply_append)
 		{
 			echo ( 
-				'<script type="text/javascript" src="'.$QmarkURL.
+				'<script src="'.$QmarkURL.
 				'pf=atReply/js/atReplyThread.js'.'"></script>'."\n".
 				'<style type="text/css">
 				<!--
@@ -114,7 +114,7 @@ class AtReplyTpl
 			);
 		}
 		
-		echo('<script type="text/javascript" src="'.$QmarkURL.
+		echo('<script src="'.$QmarkURL.
 			'pf=atReply/js/atReply.js'.'"></script>'."\n");
 	}
 	
